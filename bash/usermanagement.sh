@@ -6,16 +6,20 @@ createUser() {
     local username=$1
     local password=$2
     local role=$3
+    local uid==$(uuidgen)
 
-    
-
+    # validate role
+    if [[ "$role" != "admin" && "$role" != "patient" ]]; then
+        echo "Invalid role. Please enter either admin or patient."
+        return
+    fi
     # Check if user already exists
     if grep -q "^$username$" "$userFile" ; then
         echo "User $username already exists in our database."
     else
         # Create user and set password
-        echo "$username:$password:$role" >> "$userFile"
-        echo "User $username created and added to our database."
+        echo "$username:$password:$role:$uid" >> "$userFile"
+        echo "User $username with $uid created and added to our database."
     fi
 }
 
