@@ -1,0 +1,4 @@
+admin:A1234:admin
+patient zero:P1234:patient
+patient one:P1234:
+patient three:er:r
