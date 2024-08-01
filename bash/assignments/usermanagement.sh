@@ -84,12 +84,17 @@ patientFunctions(){
     case $choice in
         1)
             echo "Viewing profile"
+            patientFunctions
             ;;
         2)
             echo "Updating your profile"
+            patientFunctions
+
             ;;
         3)
             echo "Time is catching up with you. Computing life expectancy..."
+            patientFunctions
+
             ;;
         4)
             loginUser
