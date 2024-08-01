@@ -41,8 +41,9 @@ createAdminZero() {
 adminFunctions(){
     echo "1. Create a new user"
     echo "2. Export user data"
-    echo "3. Manage user data"
-    echo "4. Logout"
+    echo "3. Delete a user"
+    echo "4. Manage user data"
+    echo "5. Logout"
     read -p "Enter your choice: " choice
 
     case $choice in
@@ -55,16 +56,20 @@ adminFunctions(){
             adminFunctions
             ;;
         2)
+            echo "Exporting user data..."
+            adminFunctions
+            ;;
+        3)
             read -p "Enter username to delete: " username
             sed -i "/^$username/d" "$userFile"
             echo "User $username deleted."
             adminFunctions
             ;;
-        3)
+        4)
             cat "$userFile"
             adminFunctions
             ;;
-        4)
+        5)
             loginUser
             ;;
         *)
