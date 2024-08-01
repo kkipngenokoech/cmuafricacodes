@@ -1,9 +1,2 @@
-admin:A1234:admin
-patient zero:P1234:patient
-patient one:P1234:
-patient three:er:r
-=70ac3dab-286f-4cd5-966f-51c41dfcef9d:patient net zero:12wer43:patient
-=f17d7af9-2215-40a6-a001-7be0ed0a8994:werwr:erfdf:admin
-er:er:patient:
-rc:erwf:werf:=e6305372-2b66-47c1-96b5-29546929ab8d
-wef:wefd:wef:=7fc1ab21-2faa-4b12-a8d6-4e1c66c37526
+admin:A1234:admin:=0362abbe-450f-46eb-9d04-53c63d8dbf32
+patient zero:1234:patient:=49386185-67b7-4487-b0ba-72ff2ef01b41

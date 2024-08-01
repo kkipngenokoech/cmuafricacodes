@@ -100,16 +100,20 @@ patientFunctions(){
 }
 
 loginUser() {
+    local identifier
     local username=$1
     local password=$2
 
-    read -p "Enter your username: " username
+    read -p "Enter your username or UID: " identifier
     read -sp "Enter your password: " password
     echo
 
-    if grep -q "^$username:$password:" "$userFile"; then
-        echo "Welcome $username. You have successfully logged in."
-        local role=$(grep "^$username:$password:" "$userFile" | cut -d':' -f3)
+     if grep -qE "^$identifier:$password:|:[^:]*:[^:]*:$identifier$" "$userFile"; then
+        echo "Welcome $identifier. You have successfully logged in."
+        local userRecord=$(grep -E "^$identifier:$password:|:[^:]*:[^:]*:$identifier$" "$userFile")
+        echo "User record: $userRecord"
+        local role=$(echo "$userRecord" | cut -d':' -f3)
+        echo "Role: $role"
         if [ "$role" == "admin" ]; then
             adminFunctions
         else
