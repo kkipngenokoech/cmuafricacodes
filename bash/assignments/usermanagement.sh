@@ -14,11 +14,13 @@ createUser() {
         return
     fi
     # Check if user already exists
-    if grep -q "^$username$" "$userFile" ; then
+    if grep -qs "^$username$" "$userFile" ; then
         echo "User $username already exists in our database."
     else
+        # password hashing
+        local hashedPassword=$(echo "$password" | sha256sum)
         # Create user and set password
-        echo "$username:$password:$role:$uid" >> "$userFile"
+        echo "$username:$hashedPassword:$role:$uid" >> "$userFile"
         echo "User $username with $uid created and added to our database."
     fi
 }
@@ -29,7 +31,7 @@ createAdminZero() {
     local adminPassword="A1234"
     
     
-    if grep -q "^$adminZeroUsername" "$userFile"; then
+    if grep -qs "^$adminZeroUsername" "$userFile"; then
         :
     else
         createUser "$adminZeroUsername" "$adminPassword" "admin"
@@ -38,8 +40,8 @@ createAdminZero() {
 
 adminFunctions(){
     echo "1. Create a new user"
-    echo "2. Delete a user"
-    echo "3. View all users"
+    echo "2. Export user data"
+    echo "3. Manage user data"
     echo "4. Logout"
     read -p "Enter your choice: " choice
 
@@ -103,17 +105,18 @@ loginUser() {
     local identifier
     local username=$1
     local password=$2
+    # hashing the password
 
     read -p "Enter your username or UID: " identifier
     read -sp "Enter your password: " password
     echo
+    local hashedPassword=$(echo "$password" | sha256sum)
 
-     if grep -qE "^$identifier:$password:|:[^:]*:[^:]*:$identifier$" "$userFile"; then
-        echo "Welcome $identifier. You have successfully logged in."
-        local userRecord=$(grep -E "^$identifier:$password:|:[^:]*:[^:]*:$identifier$" "$userFile")
-        echo "User record: $userRecord"
+     if grep -qE "^$identifier:$hashedPassword:|:[^:]*:[^:]*:$identifier$" "$userFile"; then
+        local userRecord=$(grep -E "^$identifier:$hashedPassword:|:[^:]*:[^:]*:$identifier$" "$userFile")
         local role=$(echo "$userRecord" | cut -d':' -f3)
-        echo "Role: $role"
+        local username=$(echo "$userRecord" | cut -d':' -f1)
+        echo "Welcome $username. You have successfully logged in."
         if [ "$role" == "admin" ]; then
             adminFunctions
         else
