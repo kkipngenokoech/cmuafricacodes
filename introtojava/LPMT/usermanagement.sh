@@ -111,6 +111,7 @@ patientFunctions(){
     esac
 }
 
+
 loginUser() {
     local identifier=$1
     # local username=$1
@@ -131,6 +132,36 @@ loginUser() {
     fi
 }
 
+checkUUID(){
+    local uid=$1
+    if grep -qE ":[^:]*:[^:]*:$uid" "$userFile"; then
+        echo "User exists"
+        return 0
+    else
+        :
+    fi
+}
+completeRegistration(){
+    uuid=$2
+    username=$3
+    password=$4
+    firstName=$5
+    lastName=$6
+    email=$7
+    dateofinfection=$8
+    onMedication=$9
+    starDateofMedication=${10}
+    dob=${11}
+    country=${12}
+    role=${13}
+    if grep -q "^.*:.*:.*:$uuid:.*:.*:.*:.*:.*:.*:.*:.*$" "$userFile"; then
+        # UUID exists, update the line
+        sed -i "/^.*:.*:.*:$uuid:.*:.*:.*:.*:.*:.*:.*:.*$/c\\$username:$password:$role:$uuid:$firstName:$lastName:$email:$dateofinfection:$onMedication:$starDateofMedication:$dob:$country" "$userFile"
+    else
+        # UUID does not exist, append the new information
+        echo "$username:$password:$role:$uuid:$firstName:$lastName:$email:$dateofinfection:$onMedication:$starDateofMedication:$dob:$country" >> "$userFile"
+    fi
+}
 functionName=$1
 username=$2
 password=$3
@@ -142,6 +173,12 @@ case $functionName in
         ;;
     loginUser)
         loginUser "$username" "$password"
+        ;;
+    checkUUID)
+        checkUUID "$username"
+        ;;
+    completeRegistration)
+        completeRegistration "$@"
         ;;
     *)
         echo "Invalid function name. Please try again."

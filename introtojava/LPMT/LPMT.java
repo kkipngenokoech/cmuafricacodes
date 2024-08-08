@@ -16,12 +16,32 @@ public class LPMT {
     }
 
     public static void login() throws IOException, InterruptedException{
+        System.out.println("login with email/username? 1 or UUID? 2 note:  UUID is just for first time login");
+        int choice = Integer.parseInt(System.console().readLine());
+        if (choice == 1){
+            System.out.println("Please enter your username: ");
+            username = System.console().readLine();
+            System.out.println("Please enter your password: ");
+            password = System.console().readPassword();
+            callBash("loginUser", username, password);
+        } else {
+            System.out.println("Please enter your UUID: ");
+            String uuid = System.console().readLine();
+            String[] command ={"./usermanagement.sh", "checkUUID", uuid};
+            String username = executeCommand(command).trim();
+            if (username == null || username.isEmpty()){
+                System.out.println("Invalid UUID");
+                login();
+            } else {
+                System.out.println("Congratulations! Your UUID is valid. Please proceed and complete your registration");
+                String[] commandCompleteReg= patient.CompleteRegistration(uuid);
+                System.out.println(commandCompleteReg.length);
+                executeCommand(commandCompleteReg);
+                patient.patientMenu();
+
+            }
+        }
         // method to login
-        System.out.println("Please enter your username: ");
-        username = System.console().readLine();
-        System.out.println("Please enter your password: ");
-        password = System.console().readPassword();
-        callBash("loginUser", username, password);
     }
 
     public static void callBash(String function, String username, char[] password, String role) throws IOException, InterruptedException{
