@@ -134,7 +134,16 @@ loginUser() {
 functionName=$1
 username=$2
 password=$3
-# createAdminZero
-# loginUser "$username" "$password"
-eval "$functionName $username $password"
-# createUser "patient2" "p1234" "patient"
+role=$4
+
+case $functionName in
+    createUser)
+        createUser "$username" "$password" "$role"
+        ;;
+    loginUser)
+        loginUser "$username" "$password"
+        ;;
+    *)
+        echo "Invalid function name. Please try again."
+        ;;
+esac

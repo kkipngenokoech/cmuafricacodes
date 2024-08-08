@@ -1,4 +1,41 @@
 public class Patient{
+    public void patientMenu(){
+        // method 
+        System.out.println("1. Complete registration");
+        System.out.println("2. Calculate LPMT");
+        System.out.println("3. View medical history");
+        System.out.println("4. Update profile");
+        System.out.println("5. Delete profile");
+        System.out.println("6. View profile");
+        System.out.println("7. Exit");
+        System.out.println("Please enter your choice: ");
+        int choice = Integer.parseInt(System.console().readLine());
+        switch (choice) {
+            case 1:
+                CompleteRegistration();
+                break;
+            case 2:
+                CalculateLPMT();
+                break;
+            case 3:
+                ViewMedicalHistory();
+                break;
+            case 4:
+                UpdateProfile();
+                break;
+            case 5:
+                DeleteProfile();
+                break;
+            case 6:
+                ViewProfile();
+                break;
+            case 7:
+                System.exit(0);
+                break;
+            default:
+                break;
+        }
+    }
     public void CompleteRegistration(){
         System.out.println("Completing registration");
         // I want to ask the user to enter their username and password

@@ -1,7 +1,7 @@
 import java.io.IOException;
 
 public class Admin {
-    public void CreateUser(){
+    public void CreateUser() throws IOException, InterruptedException{
         System.out.println("Creating a new user");
         // I want to ask the user to enter their username and password
         System.out.println("Please enter the username of the new user: ");
@@ -79,7 +79,7 @@ public class Admin {
             System.exit(1);
         }
     }
-    public void callAdminMenu(){
+    public void callAdminMenu() throws IOException, InterruptedException{
         System.out.println("Welcome to the admin menu");
         System.out.println("Please select an option: ");
         System.out.println("1. Create a new user");
