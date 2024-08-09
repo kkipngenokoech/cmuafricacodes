@@ -136,7 +136,6 @@ public class Patient{
         System.out.println("Please enter your country: ");
         country = scanner.nextLine();
         String[] command = {"./usermanagement.sh", "completeRegistration", uuid, username, new String(password), firstName, lastName, email, dateofinfection.toString(), Boolean.toString(onMedication), starDateofMedication != null ? starDateofMedication.toString() : "null", dob.toString(), country, "patient"};
-        System.out.println("Command: " + Arrays.toString(command));
         return command;
     }
 
@@ -177,7 +176,7 @@ public class Patient{
                     break;
                 case 3:
                     System.out.println("Please enter your new email: ");
-                    email = System.console().readLine();
+                    this.email = System.console().readLine();
                     break;
                 case 4:
                     System.out.println("Please enter your new country: ");
@@ -192,7 +191,17 @@ public class Patient{
                     dob = System.console().readLine();
                     break;
                 case 7:
-                    String[] command = {"./usermanagement.sh", "updateProfile", uuid, username, new String(password), email, country, firstName, dob};
+                    String[] command = {"./usermanagement.sh", "completeRegistration", uuid, username, new String(password), firstName, lastName, email, dateofinfection.toString(), Boolean.toString(onMedication), starDateofMedication != null ? starDateofMedication.toString() : "null", dob.toString(), country, "patient"};
+                    try {
+                        String output = LPMT.executeCommand(command);
+                        System.out.println("User profile updated successfully!");
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
                     System.out.println("This method is currently under development, please be patient as we work on it.");
                     save = true;
                     break;
