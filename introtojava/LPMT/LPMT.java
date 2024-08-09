@@ -18,7 +18,21 @@ public class LPMT {
 
     public static void login() throws IOException, InterruptedException{
         System.out.println("login with email/username? 1 or UUID? 2 note:  UUID is just for first time login");
-        int choice = Integer.parseInt(System.console().readLine());
+        // i want to check if input is int else continously ask one to select one or two only
+        boolean proceed = false;
+        int choice = 0;
+        while (!proceed){
+            try {
+                choice = Integer.parseInt(System.console().readLine());
+                if (choice == 1 || choice == 2){
+                    proceed = true;
+                } else {
+                    System.out.println("Invalid input. Please enter 1 or 2");
+                }
+            } catch (NumberFormatException e){
+                System.out.println("Invalid input. Please enter 1 or 2");
+            }
+        }
         if (choice == 1){
             System.out.println("Please enter your username: ");
             username = System.console().readLine();

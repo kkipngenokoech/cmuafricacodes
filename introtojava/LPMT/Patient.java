@@ -25,28 +25,64 @@ public class Patient{
 
     public void patientMenu(String uuid) throws IOException, InterruptedException{
         this.uuid = uuid;
+        String[] command = {"./usermanagement.sh", "viewProfile", uuid};
+        String output = LPMT.executeCommand(command);
+        String[] userData = output.split(":");
+        if (userData.length >= 12) {
+            this.username = userData[0];
+            this.uuid = userData[3];
+            this.firstName = userData[4];
+            this.lastName = userData[5];
+            this.email = userData[6];
+            String dateofinfection = userData[7]+":" + userData[8] +":"+ userData[9];
+            // change to boolean
+            this.onMedication = Boolean.parseBoolean(userData[10]);
+            String startDateOfMedication = userData[11] + ":" + userData[12] + ":" + userData[13];
+            String dob = userData[14] + ":" + userData[15] + ":" + userData[16];
+            this.country = userData[userData.length-1];
+            // try to convert the date strings to Date objects
+            dateofinfection = dateofinfection.replaceAll("\\s+", " ");
+            startDateOfMedication = startDateOfMedication.replaceAll("\\s+", " ");
+            dob = dob.replaceAll("\\s+", " ");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
+            try {
+                this.dateofinfection = dateFormat.parse(dateofinfection);
+                this.starDateofMedication = startDateOfMedication.equals("null") ? null : dateFormat.parse(startDateOfMedication);
+                this.dob = dateFormat.parse(dob);
+            } catch (ParseException e) {
+                System.out.println("An error occurred while parsing the date strings.");
+                e.printStackTrace();
+            }
+            this.lpmt = calculateLPMT();
+        }
         // method to display patient menu
-        System.out.println("2. Calculate LPMT");
-        System.out.println("3. Update profile");
-        System.out.println("4. View profile");
-        System.out.println("5. Exit");
-        System.out.println("Please enter your choice: ");
-        int choice = Integer.parseInt(System.console().readLine());
-        switch (choice) {
-            case 2:
-                CalculateLPMT();
-                break;
-            case 3:
-                UpdateProfile();
-                break;
-            case 4:
-                ViewProfile();
-                break;
-            case 5:
-                System.exit(0);
-                break;
-            default:
-                break;
+        // add a while loop for logout
+        boolean logout = false;
+        while (!logout) {
+            System.out.println("Welcome to the patient menu");
+            System.out.println("Please select an option: ");
+            System.out.println("1. Calculate LPMT");
+            System.out.println("2. Update profile");
+            System.out.println("3. View profile");
+            System.out.println("4. Logout");
+            System.out.println("Please enter your choice: ");
+            int choice = Integer.parseInt(System.console().readLine());
+            switch (choice) {
+                case 1:
+                    calculateLPMT();
+                    break;
+                case 2:
+                    UpdateProfile();
+                    break;
+                case 3:
+                    ViewProfile();
+                    break;
+                case 4:
+                    logout = true;
+                    break;
+                default:
+                    break;
+            }
         }
     }
     public String[] CompleteRegistration(String uuid) {
@@ -162,55 +198,26 @@ public class Patient{
                     break;
                 default:
                     break;
+                
             }
+            System.out.println("Do you want to save the changes? (yes/no): ");
         }
     }
     public void ViewProfile() throws IOException, InterruptedException{
         // i want to fetch the user data using the uuid and display it
         System.out.println("Viewing profile");
-        String[] command = {"./usermanagement.sh", "viewProfile", uuid};
-        String output = LPMT.executeCommand(command);
-        String[] userData = output.split(":");
-        if (userData.length >= 12) {
-            String username = userData[0];
-            String patientId = userData[3];
-            String firstName = userData[4];
-            String lastName = userData[5];
-            String email = userData[6];
-            String dateofinfection = userData[7]+":" + userData[8] +":"+ userData[9];
-            // change to boolean
-            this.onMedication = Boolean.parseBoolean(userData[10]);
-            String startDateOfMedication = userData[11] + ":" + userData[12] + ":" + userData[13];
-            String dob = userData[14] + ":" + userData[15] + ":" + userData[16];
-            String country = userData[userData.length-1];
-            // try to convert the date strings to Date objects
-            dateofinfection = dateofinfection.replaceAll("\\s+", " ");
-            startDateOfMedication = startDateOfMedication.replaceAll("\\s+", " ");
-            dob = dob.replaceAll("\\s+", " ");
-            SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
-            try {
-                this.dateofinfection = dateFormat.parse(dateofinfection);
-                this.starDateofMedication = startDateOfMedication.equals("null") ? null : dateFormat.parse(startDateOfMedication);
-                this.dob = dateFormat.parse(dob);
-            } catch (ParseException e) {
-                System.out.println("An error occurred while parsing the date strings.");
-                e.printStackTrace();
-            }
             this.lpmt = calculateLPMT();
             System.out.println("Username: " + username);
-            System.out.println("Patient ID: " + patientId);
+            System.out.println("Patient ID: " + uuid);
             System.out.println("First Name: " + firstName);
             System.out.println("Last Name: " + lastName);
             System.out.println("Email: " + email);
             System.out.println("Date of Birth: " + dateofinfection);
-            System.out.println("Start Date of Medication: " + startDateOfMedication);
+            System.out.println("Start Date of Medication: " + starDateofMedication);
             System.out.println("Date of Birth: " + dob);
             System.out.println("On medication: " + onMedication);
             System.out.println("Country: " + country);
             System.out.println("LPMT - remaining lifespan (the clock is ticking): " + lpmt + " years");
-        } else {
-            System.out.println("Invalid user data format.");
-        }
     }
     public int calculateLPMT() {
         // Define average lifespan per country
@@ -240,7 +247,7 @@ public class Patient{
 
         // Calculate the initial remaining lifespan
         int remainingLifespan = avgLifespan - age;
-
+        System.out.println("country average lifespan: " + avgLifespan + " years");
         System.out.println(yearsDelayed + " delayed years");
         System.out.println(onMedication+ " status of medication");
         // Adjust remaining lifespan based on ART status and delay
