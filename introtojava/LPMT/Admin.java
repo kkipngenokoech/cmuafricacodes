@@ -14,14 +14,18 @@ public class Admin {
         LPMT.callBash("createUser", username, password, role);
     }
 
-    public void DeleteUser(){
-        System.out.println("This method is currently under maintenance, please hang in there as we update our systems");
-        
+    public void exportUserData() throws IOException, InterruptedException{
+        System.out.println("Exporting data analytics");
+        String[] command ={"./usermanagement.sh", "exportDataAnalytics"};
+        String output = LPMT.executeCommand(command);
+        System.out.println("LPMT analytics exported successfully");
     }
 
 
-    public void ExportUserData(){
-        System.out.println("This method is currently under maintenance, please hang in there as we update our systems");
+    public void ExportUserData() throws IOException, InterruptedException{
+        System.out.println("Exporting user data");
+        String[] command ={"./usermanagement.sh", "exportUserData"};
+        String output = LPMT.executeCommand(command);
     }
     public void callAdminMenu() throws IOException, InterruptedException{
         boolean exit = false;
@@ -29,8 +33,8 @@ public class Admin {
             System.out.println("Welcome to the admin menu");
             System.out.println("Please select an option: ");
             System.out.println("1. Create a new user");
-            System.out.println("2. Delete a user");
-            System.out.println("3. Export a user");
+            System.out.println("2. Export data analytics");
+            System.out.println("3. Export patient data");
             System.out.println("4. Exit");
             System.out.println("Please enter your choice: ");
             int choice = Integer.parseInt(System.console().readLine());
@@ -39,7 +43,7 @@ public class Admin {
                     CreateUser();
                     break;
                 case 2:
-                    DeleteUser();
+                    exportUserData();
                     break;
                 case 3:
                     ExportUserData();

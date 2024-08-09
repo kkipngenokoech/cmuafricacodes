@@ -137,6 +137,9 @@ loginUser() {
         loginUser
     fi
 }
+updateProfile(){
+    
+}
 
 echo "Welcome to LPMT - Your healtcare clock-in system. Please login to access our services"
 createAdminZero

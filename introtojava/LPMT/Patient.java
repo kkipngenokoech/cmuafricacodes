@@ -1,7 +1,6 @@
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,6 +29,7 @@ public class Patient{
         String[] userData = output.split(":");
         if (userData.length >= 12) {
             this.username = userData[0];
+            this.password = userData[1].toCharArray();
             this.uuid = userData[3];
             this.firstName = userData[4];
             this.lastName = userData[5];
@@ -144,18 +144,22 @@ public class Patient{
     }
 
 
-    public void UpdateProfile(){
+    public void UpdateProfile() throws IOException, InterruptedException{
         System.out.println("Updating profile");
         // I want to ask the user what he wants to updatte by displaying the options and loops until he chooses to save
         System.out.println("Please select an option: ");
         boolean save = false;
+        String username = null;
+        char[] password = null;
+        String email = null;
+        String country = null;
+        String firstName = null;
+        String lastName = null;
+        Date dob = null;
+        Date dateofinfection = null;
+        Boolean onMedication = null;
+        Date starDateofMedication = null;
         while(!save){
-            String username = null;
-            char[] password = null;
-            String email = null;
-            String country = null;
-            String firstName = null;
-            String dob = null;
             System.out.println("1. Update username");
             System.out.println("2. Update password");
             System.out.println("3. Update email");
@@ -176,7 +180,7 @@ public class Patient{
                     break;
                 case 3:
                     System.out.println("Please enter your new email: ");
-                    this.email = System.console().readLine();
+                    email = System.console().readLine();
                     break;
                 case 4:
                     System.out.println("Please enter your new country: ");
@@ -188,21 +192,20 @@ public class Patient{
                     break;
                 case 6:
                     System.out.println("Please enter your new date of birth: ");
-                    dob = System.console().readLine();
-                    break;
-                case 7:
-                    String[] command = {"./usermanagement.sh", "completeRegistration", uuid, username, new String(password), firstName, lastName, email, dateofinfection.toString(), Boolean.toString(onMedication), starDateofMedication != null ? starDateofMedication.toString() : "null", dob.toString(), country, "patient"};
+                    String dateofbirth = System.console().readLine();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                     try {
-                        String output = LPMT.executeCommand(command);
-                        System.out.println("User profile updated successfully!");
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
+                        dob = dateFormat.parse(dateofbirth);
+                    } catch (ParseException e) {
+                        System.out.println("Invalid date format. Please enter the date in yyyy-MM-dd format.");
                         e.printStackTrace();
                     }
-                    System.out.println("This method is currently under development, please be patient as we work on it.");
+                    break;
+                case 7:
+                    System.out.println("Saving changes...");
+                    String[] command = {"./usermanagement.sh", "updateProfile", uuid, username != null ? username : this.username, password != null ? new String(password) : new String(this.password), firstName != null ? firstName : this.firstName, lastName != null ? lastName : this.lastName, email != null ? email : this.email, dateofinfection != null ? dateofinfection.toString() : this.dateofinfection.toString(), onMedication != null ? Boolean.toString(onMedication) : Boolean.toString(this.onMedication), starDateofMedication != null ? starDateofMedication.toString() : this.starDateofMedication.toString(), dob != null ? dob.toString() : this.dob.toString(), country != null ? country : this.country};
+                    LPMT.executeCommand(command);
+                    System.out.println("User data updated successfully");
                     save = true;
                     break;
                 default:
@@ -242,7 +245,6 @@ public class Patient{
         int currentYear = currentCalendar.get(Calendar.YEAR);
 
         int age = currentYear - birthYear;
-        System.out.println(age+" years old");
         // to calculate years delayed: start date of medication - date of infection
         Calendar startDateOfMedicationCalendar = Calendar.getInstance();
         startDateOfMedicationCalendar.setTime(starDateofMedication);
@@ -256,8 +258,6 @@ public class Patient{
 
         // Calculate the initial remaining lifespan
         int remainingLifespan = avgLifespan - age;
-        System.out.println("Your country's average lifespan: " + avgLifespan + " years");
-        System.out.println( "You have delayed for "+yearsDelayed + "years");
         // Adjust remaining lifespan based on ART status and delay
         if (!onMedication) {
             remainingLifespan = 5 - yearsDelayed; // Patient will die in the 5th year if not on ART drugs
@@ -272,7 +272,6 @@ public class Patient{
         remainingLifespan = Math.max(0, remainingLifespan);
 
         // Print the calculated remaining lifespan
-        System.out.println("Calculated remaining lifespan: " + remainingLifespan + " years");
         return remainingLifespan;
     }
 

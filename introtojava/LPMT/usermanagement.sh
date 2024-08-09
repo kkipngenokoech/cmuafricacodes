@@ -175,6 +175,32 @@ viewProfile(){
         return 1
     fi
 }
+updateProfile(){
+    local uuid=$2
+    echo "$uuid"
+    if grep -qE ":[^:]*:[^:]*:$uuid" "$userFile"; then
+        grep -E ":[^:]*:[^:]*:$uuid" "$userFile"
+        return 0
+    else
+        echo "User not found"
+        return 1
+    fi
+}
+
+exportUserData(){
+    local patientfile="patientdata.csv"
+    cat "$patientfile"
+    // I want to aecho the headers to the text file
+    echo "Username:Password:Role:UUID:FirstName:LastName:Email:DateOfInfection:OnMedication:StartDateOfMedication:DOB:Country" > "$patientfile"
+    // I want to append data in user txt to patientdata.csv
+
+    cat "$userFile" >> "$patientfile"
+}
+
+exportDataAnalytics(){
+    local dataAnalyticsfile="dataanalytics.csv"
+    touch "$dataAnalyticsfile"
+}
 
 functionName=$1
 username=$2
@@ -196,6 +222,15 @@ case $functionName in
         ;;
     viewProfile)
         viewProfile "$username"
+        ;;
+    updateProfile)
+        updateProfile "$@"
+        ;;
+    exportUserData)
+        exportUserData
+        ;;
+    exportDataAnalytics)
+        exportDataAnalytics
         ;;
     *)
         echo "Invalid function name. Please try again."

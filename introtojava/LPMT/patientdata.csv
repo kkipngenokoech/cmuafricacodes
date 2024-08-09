@@ -1,3 +1,4 @@
+Username:Password:Role:UUID:FirstName:LastName:Email:DateOfInfection:OnMedication:StartDateOfMedication:DOB:Country
 admin:3fa71c4c7680d73031d8af3934eb13110580f99825f4b56ce736691b5889cada  -:admin:=826723f0-4114-4f41-8773-6545bbe8d7ca:wefd:werf:retg:Sat Feb 23 00:00:00 CAT 2002:true:Fri Feb 23 00:00:00 CAT 2323:Sun Nov 23 00:00:00 CAT 2324:werf
 username:1234:patient:=9c70b4ed-c1ea-4922-9522-de81c4556a29:first name:last name:email:Thu Dec 12 00:00:00 CAT 2002:true:Thu Dec 12 00:00:00 CAT 2002:Thu Dec 12 00:00:00 CAT 2002:country
 patient1:a883dafc480d466ee04e0d6da986bd78eb1fdd2178d04693723da3a8f95d42f4  -:patient:=af2a1f9b-289a-4139-8aa0-4627660edbce:first name:last name:email:Tue Jan 01 00:00:00 CAT 2002:true:Thu Dec 12 00:00:00 CAT 2002:Tue Jan 01 00:00:00 CAT 2002:country
