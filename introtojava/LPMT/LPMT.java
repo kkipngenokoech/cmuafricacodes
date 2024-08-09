@@ -114,12 +114,6 @@ public class LPMT {
                 e.printStackTrace();
             }
         });
-        // commands.put("CreateUser", admin::CreateUser);
-        // commands.put("CalculateLPMT", LPMT::CalculateLPMT);
-        // commands.put("ViewMedicalHistory", LPMT::ViewMedicalHistory);
-        // commands.put("UpdateProfile", LPMT::UpdateProfile);
-        // commands.put("DeleteProfile", LPMT::DeleteProfile);
-        // commands.put("ViewProfile", LPMT::ViewProfile);
     }
 
 }

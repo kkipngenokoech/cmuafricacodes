@@ -2,7 +2,10 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Patient{
@@ -18,7 +21,7 @@ public class Patient{
     Date dob;
     String role;
     String country;
-    String lpmt;
+    int lpmt;
 
     public void patientMenu(String uuid) throws IOException, InterruptedException{
         this.uuid = uuid;
@@ -168,7 +171,7 @@ public class Patient{
             String email = userData[6];
             String dateofinfection = userData[7]+":" + userData[8] +":"+ userData[9];
             // change to boolean
-            boolean onMedication = Boolean.parseBoolean(userData[10]);
+            this.onMedication = Boolean.parseBoolean(userData[10]);
             String startDateOfMedication = userData[11] + ":" + userData[12] + ":" + userData[13];
             String dob = userData[14] + ":" + userData[15] + ":" + userData[16];
             String country = userData[userData.length-1];
@@ -181,13 +184,11 @@ public class Patient{
                 this.dateofinfection = dateFormat.parse(dateofinfection);
                 this.starDateofMedication = startDateOfMedication.equals("null") ? null : dateFormat.parse(startDateOfMedication);
                 this.dob = dateFormat.parse(dob);
-                System.out.println("Date of infection: " + this.dateofinfection);
-                System.out.println("Start date of medication: " + this.starDateofMedication);
-                System.out.println("Date of birth: " + this.dob);
             } catch (ParseException e) {
                 System.out.println("An error occurred while parsing the date strings.");
                 e.printStackTrace();
             }
+            this.lpmt = calculateLPMT();
             System.out.println("Username: " + username);
             System.out.println("Patient ID: " + patientId);
             System.out.println("First Name: " + firstName);
@@ -196,10 +197,61 @@ public class Patient{
             System.out.println("Date of Birth: " + dateofinfection);
             System.out.println("Start Date of Medication: " + startDateOfMedication);
             System.out.println("Date of Birth: " + dob);
-            System.out.println("Active: " + onMedication);
+            System.out.println("On medication: " + onMedication);
             System.out.println("Country: " + country);
+            System.out.println("LPMT - remaining lifespan (the clock is ticking): " + lpmt + " years");
         } else {
             System.out.println("Invalid user data format.");
         }
     }
+    public int calculateLPMT() {
+        // Define average lifespan per country
+        Map<String, Integer> averageLifespan = new HashMap<>();
+        averageLifespan.put("Rwanda", 69);
+        // Add other countries as needed...
+        // to calculate age current - dob
+        Calendar dobCalendar = Calendar.getInstance();
+        dobCalendar.setTime(dob);
+        int birthYear = dobCalendar.get(Calendar.YEAR);
+
+        Calendar currentCalendar = Calendar.getInstance();
+        int currentYear = currentCalendar.get(Calendar.YEAR);
+
+        int age = currentYear - birthYear;
+        System.out.println(age+" years old");
+        // to calculate years delayed: start date of medication - date of infection
+        Calendar startDateOfMedicationCalendar = Calendar.getInstance();
+        startDateOfMedicationCalendar.setTime(starDateofMedication);
+        int startYear = startDateOfMedicationCalendar.get(Calendar.YEAR);
+        Calendar dateOfInfectionCalendar = Calendar.getInstance();
+        dateOfInfectionCalendar.setTime(dateofinfection);
+        int infectionYear = dateOfInfectionCalendar.get(Calendar.YEAR);
+        int yearsDelayed = startYear - infectionYear;
+        // Retrieve the average lifespan for the patient's country
+        int avgLifespan = averageLifespan.getOrDefault(country, 70); // Default to 70 if country not found
+
+        // Calculate the initial remaining lifespan
+        int remainingLifespan = avgLifespan - age;
+
+        System.out.println(yearsDelayed + " delayed years");
+        System.out.println(onMedication+ " status of medication");
+        // Adjust remaining lifespan based on ART status and delay
+        if (!onMedication) {
+            remainingLifespan = 5 - yearsDelayed; // Patient will die in the 5th year if not on ART drugs
+        } else {
+            // Calculate the remaining lifespan considering the delay in starting ART drugs
+            for (int i = 0; i < yearsDelayed; i++) {
+                remainingLifespan *= 0.9; // Reduce by 10% for each year delayed
+            }
+        }
+
+        // Round up to the next full year
+        remainingLifespan = (int) Math.ceil(remainingLifespan);
+
+        // Print the calculated remaining lifespan
+        System.out.println("Calculated remaining lifespan: " + remainingLifespan + " years");
+        return remainingLifespan;
+    }
+
+    // Getters and setters for country, age, onART, and yearsDelayed...
 }
