@@ -247,9 +247,8 @@ public class Patient{
 
         // Calculate the initial remaining lifespan
         int remainingLifespan = avgLifespan - age;
-        System.out.println("country average lifespan: " + avgLifespan + " years");
-        System.out.println(yearsDelayed + " delayed years");
-        System.out.println(onMedication+ " status of medication");
+        System.out.println("Your country's average lifespan: " + avgLifespan + " years");
+        System.out.println( "You have delayed for "+yearsDelayed + "years");
         // Adjust remaining lifespan based on ART status and delay
         if (!onMedication) {
             remainingLifespan = 5 - yearsDelayed; // Patient will die in the 5th year if not on ART drugs
@@ -260,8 +259,8 @@ public class Patient{
             }
         }
 
-        // Round up to the next full year
-        remainingLifespan = (int) Math.ceil(remainingLifespan);
+        // Round up to the next full year and if it is less than zero set it to zero
+        remainingLifespan = Math.max(0, remainingLifespan);
 
         // Print the calculated remaining lifespan
         System.out.println("Calculated remaining lifespan: " + remainingLifespan + " years");
