@@ -166,11 +166,28 @@ public class Patient{
             String firstName = userData[4];
             String lastName = userData[5];
             String email = userData[6];
-            String dateofinfection = userData[7] + " " + userData[8] + " " + userData[9];
-            String active = userData[10];
-            String startDateOfMedication = userData[11] + " " + userData[12] + " " + userData[13];
-            String dob = userData[14] + " " + userData[15] + " " + userData[16];
+            String dateofinfection = userData[7]+":" + userData[8] +":"+ userData[9];
+            // change to boolean
+            boolean onMedication = Boolean.parseBoolean(userData[10]);
+            String startDateOfMedication = userData[11] + ":" + userData[12] + ":" + userData[13];
+            String dob = userData[14] + ":" + userData[15] + ":" + userData[16];
             String country = userData[userData.length-1];
+            // try to convert the date strings to Date objects
+            dateofinfection = dateofinfection.replaceAll("\\s+", " ");
+            startDateOfMedication = startDateOfMedication.replaceAll("\\s+", " ");
+            dob = dob.replaceAll("\\s+", " ");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
+            try {
+                this.dateofinfection = dateFormat.parse(dateofinfection);
+                this.starDateofMedication = startDateOfMedication.equals("null") ? null : dateFormat.parse(startDateOfMedication);
+                this.dob = dateFormat.parse(dob);
+                System.out.println("Date of infection: " + this.dateofinfection);
+                System.out.println("Start date of medication: " + this.starDateofMedication);
+                System.out.println("Date of birth: " + this.dob);
+            } catch (ParseException e) {
+                System.out.println("An error occurred while parsing the date strings.");
+                e.printStackTrace();
+            }
             System.out.println("Username: " + username);
             System.out.println("Patient ID: " + patientId);
             System.out.println("First Name: " + firstName);
@@ -179,7 +196,7 @@ public class Patient{
             System.out.println("Date of Birth: " + dateofinfection);
             System.out.println("Start Date of Medication: " + startDateOfMedication);
             System.out.println("Date of Birth: " + dob);
-            System.out.println("Active: " + active);
+            System.out.println("Active: " + onMedication);
             System.out.println("Country: " + country);
         } else {
             System.out.println("Invalid user data format.");
