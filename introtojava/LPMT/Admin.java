@@ -13,6 +13,7 @@ public class Admin {
         System.out.println("User " + username + " created successfully!");
         LPMT.callBash("createUser", username, password, role);
     }
+
     public void DeleteUser(){
         System.out.println("Deleting a user");
         // I want to ask the user to enter the username of the user to delete

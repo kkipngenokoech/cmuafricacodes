@@ -115,11 +115,17 @@ public class Patient{
         System.out.println("Please select an option: ");
         boolean save = false;
         while(!save){
+            String username = null;
+            char[] password = null;
+            String email = null;
+            String country = null;
+            String firstName = null;
+            String dob = null;
             System.out.println("1. Update username");
             System.out.println("2. Update password");
             System.out.println("3. Update email");
-            System.out.println("4. Update phone number");
-            System.out.println("5. Update address");
+            System.out.println("4. Update country");
+            System.out.println("5. Update first name");
             System.out.println("6. Update date of birth");
             System.out.println("7. Save");
             System.out.println("Please enter your choice: ");
@@ -127,33 +133,35 @@ public class Patient{
             switch (choice) {
                 case 1:
                     System.out.println("Please enter your new username: ");
-                    String username = System.console().readLine();
+                    username = System.console().readLine();
                     break;
                 case 2:
                     System.out.println("Please enter your new password: ");
-                    char[] password = System.console().readPassword();
+                    password = System.console().readPassword();
                     break;
                 case 3:
                     System.out.println("Please enter your new email: ");
-                    String email = System.console().readLine();
+                    email = System.console().readLine();
                     break;
                 case 4:
-                    System.out.println("Please enter your new phone number: ");
-                    String phone = System.console().readLine();
+                    System.out.println("Please enter your new country: ");
+                    country = System.console().readLine();
                     break;
                 case 5:
-                    System.out.println("Please enter your new address: ");
-                    String address = System.console().readLine();
+                    System.out.println("Please enter your first name: ");
+                    firstName = System.console().readLine();
                     break;
                 case 6:
                     System.out.println("Please enter your new date of birth: ");
-                    String dob = System.console().readLine();
+                    dob = System.console().readLine();
                     break;
                 case 7:
+                    String[] command = {"./usermanagement.sh", "updateProfile", uuid, username, new String(password), email, country, firstName, dob};
+                    System.out.println("This method is currently under development, please be patient as we work on it.");
                     save = true;
                     break;
                 default:
-                    break; 
+                    break;
             }
         }
     }
