@@ -1,9 +1,12 @@
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Scanner;
 
 public class Patient{
+    String uuid;
     String username;
     String firstName;
     String lastName;
@@ -15,9 +18,10 @@ public class Patient{
     Date dob;
     String role;
     String country;
-    String LPMT;
+    String lpmt;
 
-    public void patientMenu(){
+    public void patientMenu(String uuid) throws IOException, InterruptedException{
+        this.uuid = uuid;
         // method to display patient menu
         System.out.println("2. Calculate LPMT");
         System.out.println("3. Update profile");
@@ -43,6 +47,7 @@ public class Patient{
         }
     }
     public String[] CompleteRegistration(String uuid) {
+        this.uuid = uuid;
         Scanner scanner = new Scanner(System.in);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     
@@ -92,6 +97,7 @@ public class Patient{
         System.out.println("Please enter your country: ");
         country = scanner.nextLine();
         String[] command = {"./usermanagement.sh", "completeRegistration", uuid, username, new String(password), firstName, lastName, email, dateofinfection.toString(), Boolean.toString(onMedication), starDateofMedication != null ? starDateofMedication.toString() : "null", dob.toString(), country, "patient"};
+        System.out.println("Command: " + Arrays.toString(command));
         return command;
     }
 
@@ -148,7 +154,35 @@ public class Patient{
             }
         }
     }
-    public void ViewProfile(){
-    // method to view profile - week two deliverable
+    public void ViewProfile() throws IOException, InterruptedException{
+        // i want to fetch the user data using the uuid and display it
+        System.out.println("Viewing profile");
+        String[] command = {"./usermanagement.sh", "viewProfile", uuid};
+        String output = LPMT.executeCommand(command);
+        String[] userData = output.split(":");
+        if (userData.length >= 12) {
+            String username = userData[0];
+            String patientId = userData[3];
+            String firstName = userData[4];
+            String lastName = userData[5];
+            String email = userData[6];
+            String dateofinfection = userData[7] + " " + userData[8] + " " + userData[9];
+            String active = userData[10];
+            String startDateOfMedication = userData[11] + " " + userData[12] + " " + userData[13];
+            String dob = userData[14] + " " + userData[15] + " " + userData[16];
+            String country = userData[userData.length-1];
+            System.out.println("Username: " + username);
+            System.out.println("Patient ID: " + patientId);
+            System.out.println("First Name: " + firstName);
+            System.out.println("Last Name: " + lastName);
+            System.out.println("Email: " + email);
+            System.out.println("Date of Birth: " + dateofinfection);
+            System.out.println("Start Date of Medication: " + startDateOfMedication);
+            System.out.println("Date of Birth: " + dob);
+            System.out.println("Active: " + active);
+            System.out.println("Country: " + country);
+        } else {
+            System.out.println("Invalid user data format.");
+        }
     }
 }

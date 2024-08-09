@@ -113,22 +113,21 @@ patientFunctions(){
 
 
 loginUser() {
-    local identifier=$1
+    local username=$1
     # local username=$1
     local password=$2
     # hashing the password
 
     local hashedPassword=$(echo "$password" | sha256sum)
 
-     if grep -qE "^$identifier:$hashedPassword:|:[^:]*:[^:]*:$identifier$" "$userFile"; then
-        local userRecord=$(grep -E "^$identifier:$hashedPassword:|:[^:]*:[^:]*:$identifier$" "$userFile")
+    if grep -qE "^$username:$hashedPassword:" "$userFile"; then
+        local userRecord=$(grep -E "^$username:$hashedPassword:" "$userFile")
         local role=$(echo "$userRecord" | cut -d':' -f3)
-        local username=$(echo "$userRecord" | cut -d':' -f1)
-        echo "$role"
-        
+        local uuid=$(echo "$userRecord" | cut -d':' -f4)
+        echo "$role:$uuid"
     else
-        echo "Invalid username or password. Please try again."
-        # loginUser
+        echo "$username:$hashedPassword"
+        # echo "Invalid username or password. Please try again."
     fi
 }
 
@@ -154,14 +153,29 @@ completeRegistration(){
     dob=${11}
     country=${12}
     role=${13}
+    password=$(echo "$password" | sha256sum)
     if grep -q "^.*:.*:.*:$uuid:.*:.*:.*:.*:.*:.*:.*:.*$" "$userFile"; then
         # UUID exists, update the line
         sed -i "/^.*:.*:.*:$uuid:.*:.*:.*:.*:.*:.*:.*:.*$/c\\$username:$password:$role:$uuid:$firstName:$lastName:$email:$dateofinfection:$onMedication:$starDateofMedication:$dob:$country" "$userFile"
+        echo "User $username with $uuid updated."
     else
         # UUID does not exist, append the new information
         echo "$username:$password:$role:$uuid:$firstName:$lastName:$email:$dateofinfection:$onMedication:$starDateofMedication:$dob:$country" >> "$userFile"
+        echo "User $username with $uuid created and added to our database."
     fi
 }
+
+viewProfile(){
+    local uuid=$1
+    if grep -qE ":[^:]*:[^:]*:$uuid" "$userFile"; then
+        grep -E ":[^:]*:[^:]*:$uuid" "$userFile"
+        return 0
+    else
+        echo "User not found"
+        return 1
+    fi
+}
+
 functionName=$1
 username=$2
 password=$3
@@ -179,6 +193,9 @@ case $functionName in
         ;;
     completeRegistration)
         completeRegistration "$@"
+        ;;
+    viewProfile)
+        viewProfile "$username"
         ;;
     *)
         echo "Invalid function name. Please try again."

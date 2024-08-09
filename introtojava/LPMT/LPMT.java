@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LPMT {
+    static String uuid;
     static String username;
     static char[] password;
     static Map<String, Runnable> commands = new HashMap<>();
@@ -36,8 +37,9 @@ public class LPMT {
                 System.out.println("Congratulations! Your UUID is valid. Please proceed and complete your registration");
                 String[] commandCompleteReg= patient.CompleteRegistration(uuid);
                 System.out.println(commandCompleteReg.length);
-                executeCommand(commandCompleteReg);
-                patient.patientMenu();
+                String test = executeCommand(commandCompleteReg);
+                System.out.println(test+" ........");
+                patient.patientMenu(uuid);
 
             }
         }
@@ -52,31 +54,44 @@ public class LPMT {
     public static void callBash(String function, String username, char[] password) throws IOException, InterruptedException{
         // method to call bash script
         String[] command ={"./usermanagement.sh", function, username, new String(password)};
-        String role = executeCommand(command).trim();
-        role = role.split("\n")[0].trim();
-        switch (function) {
-            case "loginUser":
-                if ((role.equals("admin") || role.equals("patient"))){
-                    System.out.println("Login successful");
-                    System.out.println("Welcome " + username + "!");
-                        if (role.equals("admin")){
-                            admin.callAdminMenu();
-                        } else {
-                            patient.patientMenu();
-                        }
-                } else {
-                    System.out.println("Invalid username or password");
-                    login();
-                }
+        String output = executeCommand(command).trim();
+        String role;
+        String[] lines = output.split("\n");
+        if (lines.length > 0) {
+            // Split the first line by ':' to get role and UUID
+            String[] parts = lines[0].split(":");
+            if (parts.length == 2) {
+                role = parts[0].trim();
+                uuid = parts[1].trim();
+            } else {
+                role = lines[0].trim();
+            }
+            role = role.split("\n")[0].trim();
+            System.out.println(role);
+            switch (function) {
+                case "loginUser":
+                    if ((role.equals("admin") || role.equals("patient"))){
+                        System.out.println("Login successful");
+                        System.out.println("Welcome " + username + "!");
+                            if (role.equals("admin")){
+                                admin.callAdminMenu();
+                            } else {
+                                patient.patientMenu(uuid);
+                            }
+                    } else {
+                        System.out.println("Invalid username or password");
+                        login();
+                    }
+                    break;
+                case "createUser":
+                    System.out.println("User " + username + " created successfully!");
+                    break;
+            default:
                 break;
-            case "createUser":
-                System.out.println("User " + username + " created successfully!");
-                break;
-        default:
-            break;
-        }
+            }
     }
-    private static String executeCommand(String[] command) throws IOException, InterruptedException{
+    }
+    static String executeCommand(String[] command) throws IOException, InterruptedException{
         Process process = Runtime.getRuntime().exec(command);
         int exitCode = process.waitFor();
         if(exitCode != 0){
