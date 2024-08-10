@@ -69,7 +69,7 @@ public class Patient{
             System.out.println("1. Calculate LPMT");
             System.out.println("2. Update profile");
             System.out.println("3. View profile");
-            System.out.println("4. Logout");
+            System.out.println(Design.padMessage(Design.formatMessage("4. LOGOUT", Design.YELLOW_COLOR)+ Design.formatMessage("5. EXIT", Design.RED_COLOR), 50));
             // io want to ask for input 
             System.out.print(Design.formatInputMessage("Please enter your choice: "));
             int choice;
@@ -81,7 +81,7 @@ public class Patient{
             }
             switch (choice) {
                 case 1:
-                    System.out.println(Design.formatMessage("Your life expectancy is ", Design.GREEN_COLOR) + Design.formatMessage(calculateLPMT() + " years", Design.YELLOW_COLOR));
+                    System.out.println(Design.padMessage(Design.formatMessage("Your life expectancy is ", Design.GREEN_COLOR) + Design.formatMessage(calculateLPMT() + " years", Design.YELLOW_COLOR), 60));
                     calculateLPMT();
                     break;
                 case 2:
@@ -92,6 +92,10 @@ public class Patient{
                     break;
                 case 4:
                     logout = true;
+                    LPMT.login();
+                    break;
+                case 5:
+                    System.exit(0);
                     break;
                 default:
                     System.out.println(Design.formatMessage("please choose a number within the range 1-4 depending on the services you want!", Design.RED_COLOR));
@@ -183,7 +187,7 @@ public class Patient{
             System.out.println("4. Update country");
             System.out.println("5. Update first name");
             System.out.println("6. Update date of birth");
-            System.out.println("7. Save");
+            System.out.println(Design.padMessage(Design.formatMessage("7. SAVE", Design.GREEN_COLOR)+ Design.formatMessage("8. CANCEL", Design.YELLOW_COLOR), 50));
             System.out.print(Design.formatInputMessage("Please enter your choice: "));
             int choice = Integer.parseInt(System.console().readLine());
             switch (choice) {
@@ -216,7 +220,7 @@ public class Patient{
                         try {
                             dob = dateFormat.parse(dateofbirth);
                             correctFormat = true;
-                            
+
                         } catch (ParseException e) {
                             System.out.print(Design.formatMessage("Invalid date format, please enter the date in yyyy-MM-dd format:", Design.RED_COLOR));
                             dateofbirth = System.console().readLine();
@@ -227,21 +231,28 @@ public class Patient{
                     System.out.println("Saving changes...");
                     String[] command = {"./usermanagement.sh", "updateProfile", uuid, username != null ? username : this.username, password != null ? new String(password) : new String(this.password), firstName != null ? firstName : this.firstName, lastName != null ? lastName : this.lastName, email != null ? email : this.email, dateofinfection != null ? dateofinfection.toString() : this.dateofinfection.toString(), onMedication != null ? Boolean.toString(onMedication) : Boolean.toString(this.onMedication), starDateofMedication != null ? starDateofMedication.toString() : this.starDateofMedication.toString(), dob != null ? dob.toString() : this.dob.toString(), country != null ? country : this.country};
                     LPMT.executeCommand(command);
-                    System.out.println("User data updated successfully");
+                    System.out.println(Design.padMessage(Design.formatMessage("User data updated successfully", Design.GREEN_COLOR), 50));
+                    save = true;
+                    break;
+                case 8:
+                    System.out.println(Design.padMessage(Design.formatMessage("Cancelling changes...", Design.RED_COLOR), 50));
                     save = true;
                     break;
                 default:
                     break;
                 
             }
-            System.out.println("Do you want to save the changes? (yes/no): ");
+            if (!save){
+                System.out.println(Design.createBorder(50));
+                System.out.println(Design.padMessage(Design.formatMessage("Any other field you want to update?", Design.BLUE_COLOR), 50));
+            } 
         }
     }
     public void ViewProfile() throws IOException, InterruptedException{
         // i want to fetch the user data using the uuid and display it
         // border color and padding
         System.out.println(Design.createBorder(50));
-        System.out.println(Design.padMessage(Design.formatMessage("Patient Profile", Design.BLUE_COLOR), 50));
+        System.out.println(Design.padMessage(Design.formatMessage("Patient Profile", Design.BLUE_COLOR), 56));
         System.out.println(Design.createBorder(50));
         this.lpmt = calculateLPMT();
         System.out.println("Username: " + Design.formatMessage(username, Design.YELLOW_COLOR));

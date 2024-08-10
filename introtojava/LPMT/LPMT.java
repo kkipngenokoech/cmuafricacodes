@@ -40,7 +40,9 @@ public class LPMT {
                 if (choice == 1 || choice == 2) {
                     proceed = true;
                 } else {
-                    System.out.print(Design.formatMessage("Invalid input. Please enter 1 or 2:", Design.RED_COLOR));
+                    // i want to pad this ones
+
+                    System.out.print(Design.padMessage(Design.formatMessage("Invalid input. Please enter 1 or 2:", Design.RED_COLOR), 50));
                 }
             } catch (NumberFormatException e) {
                 System.out.print(Design.formatMessage("Invalid input. Please enter 1 or 2:", Design.RED_COLOR));
@@ -95,7 +97,7 @@ public class LPMT {
                 case "loginUser":
                     if ((role.equals("admin") || role.equals("patient"))){
                         // login successful with colors
-                        System.out.println(Design.formatMessage("Login successful, welcome "+username, Design.GREEN_COLOR));
+                        System.out.println(Design.padMessage(Design.formatMessage("Login successful, welcome "+username, Design.GREEN_COLOR),50));
                             if (role.equals("admin")){
                                 admin.callAdminMenu();
                             } else {
