@@ -26,4 +26,16 @@ public class Design {
         int padding = (length - message.length()) / 2;
         return " ".repeat(padding) + message + " ".repeat(padding);
     }
+
+    public static void printTableHeader() {
+        System.out.println("+-------------------------+-------------------------+");
+        System.out.println("| System Message          | User Input              |");
+        System.out.println("+-------------------------+-------------------------+");
+    }
+
+    // Method to print a row with two columns
+    public static void printTableRow(String systemMessage, String userInput) {
+        System.out.printf("| %-23s | %-23s |%n", systemMessage, userInput);
+        System.out.println("+-------------------------+-------------------------+");
+    }
 }

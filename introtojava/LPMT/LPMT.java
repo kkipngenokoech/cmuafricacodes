@@ -14,7 +14,7 @@ public class LPMT {
         String loginMessage = Design.formatMessage("Please login to access our services", Design.GREEN_COLOR);
 
         int maxLength = Math.max(welcomeMessage.length(), loginMessage.length());
-        String border = Design.createBorder(maxLength);
+        String border = Design.createBorder(50);
 
         System.out.println(border);
         System.out.println(Design.padMessage(welcomeMessage, maxLength));
@@ -28,8 +28,8 @@ public class LPMT {
   
     public static void login() throws IOException, InterruptedException {
         System.out.println(Design.formatMessage("Please select an option to login", Design.BLUE_COLOR));
-        System.out.println(Design.formatInputMessage("1. email/username? input 1"));
-        System.out.println(Design.formatInputMessage("2. UUID note: input 2"));
+        System.out.println("1. Login with email/username");
+        System.out.println("2. Login with UUID");
         System.out.print(Design.formatMessage("please note that UUID is for first login only:", Design.YELLOW_COLOR));
         
         boolean proceed = false;
@@ -91,12 +91,11 @@ public class LPMT {
                 role = lines[0].trim();
             }
             role = role.split("\n")[0].trim();
-            System.out.println(role);
             switch (function) {
                 case "loginUser":
                     if ((role.equals("admin") || role.equals("patient"))){
-                        System.out.println("Login successful");
-                        System.out.println("Welcome " + username + "!");
+                        // login successful with colors
+                        System.out.println(Design.formatMessage("Login successful, welcome "+username, Design.GREEN_COLOR));
                             if (role.equals("admin")){
                                 admin.callAdminMenu();
                             } else {

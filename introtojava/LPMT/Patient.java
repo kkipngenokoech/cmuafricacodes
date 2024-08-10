@@ -59,16 +59,29 @@ public class Patient{
         // add a while loop for logout
         boolean logout = false;
         while (!logout) {
-            System.out.println("Welcome to the patient menu");
-            System.out.println("Please select an option: ");
+            String welcomeMessage = Design.formatMessage("Patient Menu", Design.BLUE_COLOR);
+            String choiceMessage = Design.formatMessage("Please select an option: ", Design.GREEN_COLOR);
+            // bprder and padding
+            System.out.println(Design.createBorder(50));
+            System.out.println(Design.padMessage(welcomeMessage, 50));
+            System.out.println(Design.padMessage(choiceMessage, 50));
+            System.out.println(Design.createBorder(50));
             System.out.println("1. Calculate LPMT");
             System.out.println("2. Update profile");
             System.out.println("3. View profile");
             System.out.println("4. Logout");
-            System.out.println("Please enter your choice: ");
-            int choice = Integer.parseInt(System.console().readLine());
+            // io want to ask for input 
+            System.out.print(Design.formatInputMessage("Please enter your choice: "));
+            int choice;
+            try {
+                choice = Integer.parseInt(System.console().readLine());
+            } catch (NumberFormatException e) {
+                System.out.println(Design.formatMessage("Please enter a valid integer!", Design.RED_COLOR));
+                continue;
+            }
             switch (choice) {
                 case 1:
+                    System.out.println(Design.formatMessage("Your life expectancy is ", Design.GREEN_COLOR) + Design.formatMessage(calculateLPMT() + " years", Design.YELLOW_COLOR));
                     calculateLPMT();
                     break;
                 case 2:
@@ -81,6 +94,7 @@ public class Patient{
                     logout = true;
                     break;
                 default:
+                    System.out.println(Design.formatMessage("please choose a number within the range 1-4 depending on the services you want!", Design.RED_COLOR));
                     break;
             }
         }
@@ -145,9 +159,12 @@ public class Patient{
 
 
     public void UpdateProfile() throws IOException, InterruptedException{
-        System.out.println("Updating profile");
+        // border color and padding
+        System.out.println(Design.createBorder(50));
+        System.out.println(Design.padMessage(Design.formatMessage("Update Profile", Design.BLUE_COLOR), 50));
+        System.out.println(Design.padMessage(Design.formatMessage("Please select choose an option: ", Design.GREEN_COLOR), 50));
+        System.out.println(Design.createBorder(50));
         // I want to ask the user what he wants to updatte by displaying the options and loops until he chooses to save
-        System.out.println("Please select an option: ");
         boolean save = false;
         String username = null;
         char[] password = null;
@@ -167,38 +184,43 @@ public class Patient{
             System.out.println("5. Update first name");
             System.out.println("6. Update date of birth");
             System.out.println("7. Save");
-            System.out.println("Please enter your choice: ");
+            System.out.print(Design.formatInputMessage("Please enter your choice: "));
             int choice = Integer.parseInt(System.console().readLine());
             switch (choice) {
                 case 1:
-                    System.out.println("Please enter your new username: ");
+                    System.out.print(Design.formatInputMessage("Please enter your new username: "));
                     username = System.console().readLine();
                     break;
                 case 2:
-                    System.out.println("Please enter your new password: ");
+                    System.out.print(Design.formatInputMessage("Please enter your new password: "));
                     password = System.console().readPassword();
                     break;
                 case 3:
-                    System.out.println("Please enter your new email: ");
+                    System.out.print(Design.formatInputMessage("Please enter your new email: "));
                     email = System.console().readLine();
                     break;
                 case 4:
-                    System.out.println("Please enter your new country: ");
+                    System.out.print(Design.formatInputMessage("Please enter your new country: "));
                     country = System.console().readLine();
                     break;
                 case 5:
-                    System.out.println("Please enter your first name: ");
+                    System.out.print(Design.formatInputMessage("Please enter your new first name: "));
                     firstName = System.console().readLine();
                     break;
                 case 6:
-                    System.out.println("Please enter your new date of birth: ");
+                    System.out.print(Design.formatInputMessage("Please enter your correct Date of birth: "));
                     String dateofbirth = System.console().readLine();
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    try {
-                        dob = dateFormat.parse(dateofbirth);
-                    } catch (ParseException e) {
-                        System.out.println("Invalid date format. Please enter the date in yyyy-MM-dd format.");
-                        e.printStackTrace();
+                    boolean correctFormat = false;
+                    while(!correctFormat){
+                        try {
+                            dob = dateFormat.parse(dateofbirth);
+                            correctFormat = true;
+                            
+                        } catch (ParseException e) {
+                            System.out.print(Design.formatMessage("Invalid date format, please enter the date in yyyy-MM-dd format:", Design.RED_COLOR));
+                            dateofbirth = System.console().readLine();
+                        }
                     }
                     break;
                 case 7:
@@ -217,19 +239,26 @@ public class Patient{
     }
     public void ViewProfile() throws IOException, InterruptedException{
         // i want to fetch the user data using the uuid and display it
-        System.out.println("Viewing profile");
-            this.lpmt = calculateLPMT();
-            System.out.println("Username: " + username);
-            System.out.println("Patient ID: " + uuid);
-            System.out.println("First Name: " + firstName);
-            System.out.println("Last Name: " + lastName);
-            System.out.println("Email: " + email);
-            System.out.println("Date of Birth: " + dateofinfection);
-            System.out.println("Start Date of Medication: " + starDateofMedication);
-            System.out.println("Date of Birth: " + dob);
-            System.out.println("On medication: " + onMedication);
-            System.out.println("Country: " + country);
-            System.out.println("LPMT - remaining lifespan (the clock is ticking): " + lpmt + " years");
+        // border color and padding
+        System.out.println(Design.createBorder(50));
+        System.out.println(Design.padMessage(Design.formatMessage("Patient Profile", Design.BLUE_COLOR), 50));
+        System.out.println(Design.createBorder(50));
+        this.lpmt = calculateLPMT();
+        System.out.println("Username: " + Design.formatMessage(username, Design.YELLOW_COLOR));
+        System.out.println("Patient ID: " + Design.formatMessage(uuid, Design.YELLOW_COLOR));
+        System.out.println("First Name: " + Design.formatMessage(firstName, Design.YELLOW_COLOR));
+        System.out.println("Last Name: " + Design.formatMessage(lastName, Design.YELLOW_COLOR));
+        System.out.println("Email: " + Design.formatMessage(email, Design.YELLOW_COLOR));
+        System.out.println("Date of Birth: " + Design.formatMessage(dob.toString(), Design.YELLOW_COLOR));
+        System.out.println("Date of Infection: " + Design.formatMessage(dateofinfection.toString(), Design.YELLOW_COLOR));
+        System.out.println("On medication: " + Design.formatMessage(Boolean.toString(onMedication), Design.YELLOW_COLOR));
+        if(onMedication){
+            System.out.println("Start Date of Medication: " + Design.formatMessage(starDateofMedication.toString(), Design.YELLOW_COLOR));
+        } else{
+            System.out.println("Start Date of Medication: " + Design.formatMessage("Not on medication", Design.YELLOW_COLOR));
+        }
+        System.out.println("Country: " + Design.formatMessage(country, Design.YELLOW_COLOR));
+        System.out.println("LPMT - remaining lifespan (the clock is ticking): " + Design.formatMessage(Integer.toString(lpmt) + " years", Design.YELLOW_COLOR));
     }
     public int calculateLPMT() {
         // Define average lifespan per country
