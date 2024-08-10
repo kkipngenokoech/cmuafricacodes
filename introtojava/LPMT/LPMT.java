@@ -10,54 +10,64 @@ public class LPMT {
     private static Admin admin = new Admin();
     private static Patient patient = new Patient();
     public static void main(String[] args) throws IOException, InterruptedException {
-        System.out.println("Welcome to LPMT - Your healtcare clock-in system. Please login to access our services");
+        String welcomeMessage = Design.formatMessage("Welcome to LPMT - Your healthcare clock-in system.", Design.BLUE_COLOR);
+        String loginMessage = Design.formatMessage("Please login to access our services", Design.GREEN_COLOR);
+
+        int maxLength = Math.max(welcomeMessage.length(), loginMessage.length());
+        String border = Design.createBorder(maxLength);
+
+        System.out.println(border);
+        System.out.println(Design.padMessage(welcomeMessage, maxLength));
+        System.out.println(Design.padMessage(loginMessage, maxLength));
+        System.out.println(border);
+
         initializeFunctionMap();
         login();
 
     }
-
-    public static void login() throws IOException, InterruptedException{
-        System.out.println("login with email/username? 1 or UUID? 2 note:  UUID is just for first time login");
-        // i want to check if input is int else continously ask one to select one or two only
+  
+    public static void login() throws IOException, InterruptedException {
+        System.out.println(Design.formatMessage("Please select an option to login", Design.BLUE_COLOR));
+        System.out.println(Design.formatInputMessage("1. email/username? input 1"));
+        System.out.println(Design.formatInputMessage("2. UUID note: input 2"));
+        System.out.print(Design.formatMessage("please note that UUID is for first login only:", Design.YELLOW_COLOR));
+        
         boolean proceed = false;
         int choice = 0;
-        while (!proceed){
+        while (!proceed) {
             try {
                 choice = Integer.parseInt(System.console().readLine());
-                if (choice == 1 || choice == 2){
+                if (choice == 1 || choice == 2) {
                     proceed = true;
                 } else {
-                    System.out.println("Invalid input. Please enter 1 or 2");
+                    System.out.print(Design.formatMessage("Invalid input. Please enter 1 or 2:", Design.RED_COLOR));
                 }
-            } catch (NumberFormatException e){
-                System.out.println("Invalid input. Please enter 1 or 2");
+            } catch (NumberFormatException e) {
+                System.out.print(Design.formatMessage("Invalid input. Please enter 1 or 2:", Design.RED_COLOR));
             }
         }
-        if (choice == 1){
-            System.out.println("Please enter your username: ");
-            username = System.console().readLine();
-            System.out.println("Please enter your password: ");
-            password = System.console().readPassword();
+        
+        if (choice == 1) {
+            System.out.print(Design.formatInputMessage("Please enter your username: "));
+            String username = System.console().readLine();
+            System.out.print(Design.formatInputMessage("Please enter your password: "));
+            char[] password = System.console().readPassword();
             callBash("loginUser", username, password);
         } else {
-            System.out.println("Please enter your UUID: ");
+            System.out.print(Design.formatInputMessage("Please enter your UUID: "));
             String uuid = System.console().readLine();
-            String[] command ={"./usermanagement.sh", "checkUUID", uuid};
+            String[] command = {"./usermanagement.sh", "checkUUID", uuid};
             String username = executeCommand(command).trim();
-            if (username == null || username.isEmpty()){
-                System.out.println("Invalid UUID");
+            if (username == null || username.isEmpty()) {
+                System.out.println(Design.formatMessage("Invalid UUID", Design.RED_COLOR));
+                System.out.println(Design.formatMessage("Please try again", Design.RED_COLOR));
                 login();
             } else {
-                System.out.println("Congratulations! Your UUID is valid. Please proceed and complete your registration");
-                String[] commandCompleteReg= patient.CompleteRegistration(uuid);
-                System.out.println(commandCompleteReg.length);
+                System.out.println(Design.formatMessage("Congratulations! Your UUID is valid. Please proceed and complete your registration", Design.GREEN_COLOR));
+                String[] commandCompleteReg = patient.CompleteRegistration(uuid);
                 String test = executeCommand(commandCompleteReg);
-                System.out.println(test+" ........");
-                patient.patientMenu(uuid);
-
             }
         }
-        // method to login
     }
 
     public static void callBash(String function, String username, char[] password, String role) throws IOException, InterruptedException{
@@ -93,7 +103,9 @@ public class LPMT {
                                 patient.patientMenu(uuid);
                             }
                     } else {
-                        System.out.println("Invalid username or password");
+                        System.out.println(Design.formatMessage("Invalid username or password", Design.RED_COLOR));
+                        // format this error message
+                        System.out.println(Design.formatMessage("please try again", Design.RED_COLOR));
                         login();
                     }
                     break;
@@ -105,6 +117,7 @@ public class LPMT {
             }
     }
     }
+
     static String executeCommand(String[] command) throws IOException, InterruptedException{
         Process process = Runtime.getRuntime().exec(command);
         int exitCode = process.waitFor();
