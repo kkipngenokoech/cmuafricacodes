@@ -205,6 +205,14 @@ exportDataAnalytics(){
     touch "$dataAnalyticsfile"
 }
 
+getCountryLifeExpectancy(){
+    local country=$2
+    local lifeExpectancy=75
+    local lifeExpectancyfile="life-expectancy.csv"
+    lifeExpectancy=$(awk -F',' -v country="$country" '$1 == country {print $NF}' "$lifeExpectancyfile")
+    echo "$lifeExpectancy"
+}
+
 
 functionName=$1
 username=$2
@@ -235,6 +243,9 @@ case $functionName in
         ;;
     exportDataAnalytics)
         exportDataAnalytics
+        ;;
+    getCountryLifeExpectancy)
+        getCountryLifeExpectancy "$@"
         ;;
     *)
         echo "Invalid function name. Please try again."

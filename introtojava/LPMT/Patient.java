@@ -302,12 +302,10 @@ public class Patient{
         System.out.println("Country: " + Design.formatMessage(country, Design.YELLOW_COLOR));
         System.out.println("LPMT - remaining lifespan (the clock is ticking): " + Design.formatMessage(Integer.toString(lpmt) + " years", Design.YELLOW_COLOR));
     }
-    public int calculateLPMT() {
+    public int calculateLPMT() throws IOException, InterruptedException {
         // Define average lifespan per country in years, i have it in a .csv file
-        System.out.println(country);
-        Map<String, Integer> averageLifespan = new HashMap<>();
-        averageLifespan.put("Rwanda", 69);
-        // Add other countries as needed...
+        int lifeExpectancyForYourCountry = getCountryLifeExpectancy(country);
+        
         // to calculate age current - dob
         Calendar dobCalendar = Calendar.getInstance();
         dobCalendar.setTime(dob);
@@ -326,10 +324,9 @@ public class Patient{
         int infectionYear = dateOfInfectionCalendar.get(Calendar.YEAR);
         int yearsDelayed = startYear - infectionYear;
         // Retrieve the average lifespan for the patient's country
-        int avgLifespan = averageLifespan.getOrDefault(country, 70); // Default to 70 if country not found
 
         // Calculate the initial remaining lifespan
-        int remainingLifespan = avgLifespan - age;
+        int remainingLifespan = lifeExpectancyForYourCountry - age;
         // Adjust remaining lifespan based on ART status and delay
         if (!onMedication) {
             remainingLifespan = 5 - yearsDelayed; // Patient will die in the 5th year if not on ART drugs
@@ -347,5 +344,12 @@ public class Patient{
         return remainingLifespan;
     }
 
-    // Getters and setters for country, age, onART, and yearsDelayed...
+    public int getCountryLifeExpectancy(String country) throws IOException, InterruptedException {
+        // Define average lifespan per country in years, i have it in a .csv file
+        String[] command = {"./usermanagement.sh", "getCountryLifeExpectancy", country};
+        String output = LPMT.executeCommand(command);
+        double lifeExpectancy = Double.parseDouble(output);
+        return (int) Math.round(lifeExpectancy);
+    }
+
 }
