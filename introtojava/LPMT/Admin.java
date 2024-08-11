@@ -14,13 +14,14 @@ public class Admin {
         String role = "";
         while(!proceed){
             System.out.print(Design.formatInputMessage("Please enter the role of the new user: "));
-            role = System.console().readLine();
+            role = System.console().readLine().toLowerCase();
             if(role.equals("admin") || role.equals("patient")){
                 proceed = true;
             }else{
                 System.out.print(Design.formatMessage("Invalid role. Please enter either 'admin' or 'patient'", Design.RED_COLOR));
             }
         }
+        System.out.print(Design.formatMessage("Creating user", Design.YELLOW_COLOR));printLoadingDots(3);
         String[] command ={"./usermanagement.sh", "createUser", username, role};
         String output = LPMT.executeCommand(command);
         System.out.println(Design.padMessage(Design.formatMessage(output, Design.GREEN_COLOR), 65));
@@ -32,7 +33,8 @@ public class Admin {
         // padding this message
         System.out.println(Design.padMessage(Design.formatMessage("Export data analytics",Design.BLUE_COLOR), 50));
         System.out.println(Design.createBorder(50));
-        printLoadingDots(5);
+        System.out.print(Design.formatMessage("Exporting data analytics", Design.YELLOW_COLOR));
+        printLoadingDots(2);
         String[] command ={"./usermanagement.sh", "exportDataAnalytics"};
         String output = LPMT.executeCommand(command);
         System.out.println(Design.padMessage(Design.formatMessage("LPMT analytics exported successfully", Design.GREEN_COLOR), 50));
@@ -45,7 +47,8 @@ public class Admin {
         // padding this message
         System.out.println(Design.padMessage(Design.formatMessage("Export patient data",Design.BLUE_COLOR), 50));
         System.out.println(Design.createBorder(50));  
-        printLoadingDots(5);  
+        System.out.print(Design.formatMessage("Exporting patient data", Design.YELLOW_COLOR));
+        printLoadingDots(2); 
         String[] command ={"./usermanagement.sh", "exportUserData"};
         String output = LPMT.executeCommand(command);
         System.out.println(Design.padMessage(Design.formatMessage("LPMT patient data exported successfully", Design.GREEN_COLOR), 50));

@@ -12,7 +12,7 @@ createUser() {
         echo "User $username already exists in our database."
     else
         # Create user and set role
-        echo "$username:$role:$uid" >> "$userFile"
+        echo "$uid:$username:$role" >> "$userFile"
         echo "UUID $uid generated"
     fi
 }
@@ -125,8 +125,9 @@ loginUser() {
 
 checkUUID(){
     local uid=$1
-    if grep -qE ":[^:]*:[^:]*:$uid" "$userFile"; then
-        echo "User exists"
+    # grep for uuid in the user.txt file
+     if grep -qE "^$uid:" "$userFile"; then
+        echo "UUID exists"
         return 0
     else
         :
@@ -146,15 +147,14 @@ completeRegistration(){
     country=${12}
     role=${13}
     password=$(echo "$password" | sha256sum)
-    if grep -q "^.*:.*:.*:$uuid:.*:.*:.*:.*:.*:.*:.*:.*$" "$userFile"; then
-        # UUID exists, update the line
-        sed -i "/^.*:.*:.*:$uuid:.*:.*:.*:.*:.*:.*:.*:.*$/c\\$username:$password:$role:$uuid:$firstName:$lastName:$email:$dateofinfection:$onMedication:$starDateofMedication:$dob:$country" "$userFile"
-        echo "User $username with $uuid updated."
-    else
-        # UUID does not exist, append the new information
-        echo "$username:$password:$role:$uuid:$firstName:$lastName:$email:$dateofinfection:$onMedication:$starDateofMedication:$dob:$country" >> "$userFile"
-        echo "User $username with $uuid created and added to our database."
+    if grep -q "^$uuid:" "$userFile"; then
+        # UUID exists, delete the line
+        sed -i "/^$uuid:/d" "$userFile"
     fi
+
+    # Append the new data
+    echo "$uuid:$username:$password:$role:$firstName:$lastName:$email:$dateofinfection:$onMedication:$starDateofMedication:$dob:$country" >> "$userFile"
+    echo "User $username with $uuid updated."
 }
 
 viewProfile(){

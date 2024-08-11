@@ -107,52 +107,76 @@ public class Patient{
         this.uuid = uuid;
         Scanner scanner = new Scanner(System.in);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    
-        System.out.println("Please enter your username: ");
+        // border padding and message
+        System.out.println(Design.createBorder(50));
+        System.out.println(Design.padMessage(Design.formatMessage("Complete Registration", Design.BLUE_COLOR), 50));
+        System.out.println(Design.createBorder(50));
+        System.out.print(Design.formatInputMessage("Please enter your username: "));
         username = scanner.nextLine();
-        System.out.println("Please enter your first name: ");
+        System.out.print(Design.formatInputMessage("Please enter your first name: "));
         firstName = scanner.nextLine();
-        System.out.println("Please enter your last name: ");
+        System.out.print(Design.formatInputMessage("Please enter your last name: "));
         lastName = scanner.nextLine();
-        System.out.println("Please enter your date of infection (yyyy-MM-dd): ");
-        String dateInput = scanner.nextLine();
-    
-        try {
-            dateofinfection = dateFormat.parse(dateInput);
-        } catch (ParseException e) {
-            System.out.println("Invalid date format. Please enter the date in yyyy-MM-dd format.");
-            e.printStackTrace();
+        System.out.print(Design.formatInputMessage("Please enter your password: "));
+        password = scanner.nextLine().toCharArray();
+        System.out.print(Design.formatInputMessage("Please confirm your password: "));
+        String confirmPassword = scanner.nextLine();
+        while (!new String(password).equals(confirmPassword)) {
+            System.out.println(Design.formatMessage("Passwords do not match. Please try again.", Design.RED_COLOR));
+            System.out.print(Design.formatInputMessage("Please enter your password: "));
+            password = scanner.nextLine().toCharArray();
+            System.out.print(Design.formatInputMessage("Please confirm your password: "));
+            confirmPassword = scanner.nextLine();
         }
-    
-        System.out.println("Are you on medication? (true/false): ");
-        onMedication = Boolean.parseBoolean(scanner.nextLine());
+        System.out.print(Design.formatInputMessage("Please enter your email: "));
+        email = scanner.nextLine();
+        System.out.print(Design.formatInputMessage("Please enter your country: "));
+        country = scanner.nextLine();
+        boolean validDOB = false;
+        while (!validDOB) {
+            System.out.print(Design.formatInputMessage("Please enter your date of birth (yyyy-MM-dd): "));
+            String dobInput = scanner.nextLine();
+            try {
+                dob = dateFormat.parse(dobInput);
+                validDOB = true;
+            } catch (ParseException e) {
+                System.out.println(Design.formatMessage("Invalid date format. Please enter the date in yyyy-MM-dd format.", Design.RED_COLOR));
+            }
+        }
+        boolean validDOI = false;
+        while (!validDOI) {
+            System.out.print(Design.formatInputMessage("Please enter your date of infection (yyyy-MM-dd): "));
+            String doiInput = scanner.nextLine();
+            try {
+                dateofinfection = dateFormat.parse(doiInput);
+                validDOI = true;
+            } catch (ParseException e) {
+                System.out.println(Design.formatMessage("Invalid date format. Please enter the date in yyyy-MM-dd format.", Design.RED_COLOR));
+            }
+        }
+        boolean onMedicationFlag = false;
+        while (!onMedicationFlag) {
+            System.out.print(Design.formatMessage("Are you on medication? ", Design.GREEN_COLOR) + Design.formatMessage("true/false: ", Design.YELLOW_COLOR));
+            String onMedicationInput = scanner.nextLine();
+            if (onMedicationInput.equalsIgnoreCase("true") || onMedicationInput.equalsIgnoreCase("false")) {
+                onMedication = Boolean.parseBoolean(onMedicationInput);
+                onMedicationFlag = true;
+            } else {
+                System.out.println(Design.formatMessage("Invalid input. Please enter either 'true' or 'false'", Design.RED_COLOR));
+            }
+        }
         if (onMedication) {
-            System.out.println("Please enter the start date of your medication (yyyy-MM-dd): ");
+            System.out.print(Design.formatInputMessage("Please enter the start date of your medication (yyyy-MM-dd): "));
             String medStartDateInput = scanner.nextLine();
             try {
                 starDateofMedication = dateFormat.parse(medStartDateInput);
             } catch (ParseException e) {
-                System.out.println("Invalid date format. Please enter the date in yyyy-MM-dd format.");
-                e.printStackTrace();
+                System.out.println(Design.formatMessage("Invalid date format. Please enter the date in yyyy-MM-dd format.", Design.RED_COLOR));
             }
         } else {
             starDateofMedication = null;
         }
     
-        System.out.println("Please enter your password: ");
-        password = scanner.nextLine().toCharArray();
-        System.out.println("Please enter your email: ");
-        email = scanner.nextLine();
-        System.out.println("Please enter your date of birth (yyyy-MM-dd): ");
-        String dobInput = scanner.nextLine();
-        try {
-            dob = dateFormat.parse(dobInput);
-        } catch (ParseException e) {
-            System.out.println("Invalid date format. Please enter the date in yyyy-MM-dd format.");
-            e.printStackTrace();
-        }
-        System.out.println("Please enter your country: ");
-        country = scanner.nextLine();
         String[] command = {"./usermanagement.sh", "completeRegistration", uuid, username, new String(password), firstName, lastName, email, dateofinfection.toString(), Boolean.toString(onMedication), starDateofMedication != null ? starDateofMedication.toString() : "null", dob.toString(), country, "patient"};
         return command;
     }

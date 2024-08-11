@@ -55,20 +55,35 @@ public class LPMT {
             char[] password = System.console().readPassword();
             callBash("loginUser", username, password);
         } else {
-            System.out.print(Design.formatInputMessage("Please enter your UUID: "));
-            String uuid = System.console().readLine();
-            String[] command = {"./usermanagement.sh", "checkUUID", uuid};
-            String username = executeCommand(command).trim();
-            if (username == null || username.isEmpty()) {
-                System.out.println(Design.formatMessage("Invalid UUID", Design.RED_COLOR));
-                System.out.println(Design.formatMessage("Please try again", Design.RED_COLOR));
-                login();
-            } else {
-                System.out.println(Design.formatMessage("Congratulations! Your UUID is valid. Please proceed and complete your registration", Design.GREEN_COLOR));
-                String[] commandCompleteReg = patient.CompleteRegistration(uuid);
-                String test = executeCommand(commandCompleteReg);
+            boolean completeRegistrationFlag = false;
+            while (!completeRegistrationFlag) {
+                System.out.print(Design.formatInputMessage("Please enter your UUID: "));
+                String uuid = System.console().readLine();
+                String[] command = {"./usermanagement.sh", "checkUUID", uuid};
+                String output = executeCommand(command).trim();
+                if (output == null || output.isEmpty()) {
+                    // pad this message
+                    System.out.println(Design.padMessage(Design.formatMessage("Invalid UUID! Please try again!", Design.RED_COLOR), 60));
+                } else {
+                    System.out.println(Design.formatMessage("Congratulations! Your UUID is valid. Please proceed and complete your registration", Design.GREEN_COLOR));
+                    String[] commandCompleteReg = patient.CompleteRegistration(uuid);
+                    System.out.print(Design.formatMessage("Completing registration", Design.YELLOW_COLOR));
+                    printLoadingDots(5);
+                    String test = executeCommand(commandCompleteReg);
+                    System.out.println(Design.padMessage(Design.formatMessage("Registration complete! Please login to access our services", Design.GREEN_COLOR), 70));
+                    completeRegistrationFlag = true;
+                    login();
+                }
             }
         }
+    }
+
+    public static void printLoadingDots(int seconds) throws InterruptedException {
+        for (int i = 0; i < seconds; i++) {
+            Thread.sleep(1000);
+            System.out.print(".");
+        }
+        System.out.println();
     }
 
     public static void callBash(String function, String username, char[] password, String role) throws IOException, InterruptedException{
@@ -103,9 +118,8 @@ public class LPMT {
                                 patient.patientMenu(uuid);
                             }
                     } else {
-                        System.out.println(Design.formatMessage("Invalid username or password", Design.RED_COLOR));
-                        // format this error message
-                        System.out.println(Design.formatMessage("please try again", Design.RED_COLOR));
+                        System.out.print(Design.formatMessage("Invalid username or password,", Design.RED_COLOR));
+                        System.out.println(Design.formatMessage("please try again!", Design.RED_COLOR));
                         login();
                     }
                     break;
