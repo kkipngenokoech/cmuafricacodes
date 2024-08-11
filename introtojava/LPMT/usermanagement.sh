@@ -4,24 +4,16 @@ userFile="user.txt"
 # Function to create a user
 createUser() {
     local username=$1
-    local password=$2
-    local role=$3
+    local role=$2
     local uid==$(uuidgen)
 
-    # validate role
-    if [[ "$role" != "admin" && "$role" != "patient" ]]; then
-        echo "Invalid role. Please enter either admin or patient."
-        return
-    fi
     # Check if user already exists
     if grep -qs "^$username$" "$userFile" ; then
         echo "User $username already exists in our database."
     else
-        # password hashing
-        local hashedPassword=$(echo "$password" | sha256sum)
-        # Create user and set password
-        echo "$username:$hashedPassword:$role:$uid" >> "$userFile"
-        echo "User $username with $uid created and added to our database."
+        # Create user and set role
+        echo "$username:$role:$uid" >> "$userFile"
+        echo "UUID $uid generated"
     fi
 }
 
@@ -209,7 +201,7 @@ role=$4
 
 case $functionName in
     createUser)
-        createUser "$username" "$password" "$role"
+        createUser "$username" "$password"
         ;;
     loginUser)
         loginUser "$username" "$password"

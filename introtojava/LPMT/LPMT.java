@@ -10,6 +10,12 @@ public class LPMT {
     private static Admin admin = new Admin();
     private static Patient patient = new Patient();
     public static void main(String[] args) throws IOException, InterruptedException {
+        initializeFunctionMap();
+        login();
+
+    }
+  
+    public static void login() throws IOException, InterruptedException {
         String welcomeMessage = Design.formatMessage("Welcome to LPMT - Your healthcare clock-in system.", Design.BLUE_COLOR);
         String loginMessage = Design.formatMessage("Please login to access our services", Design.GREEN_COLOR);
 
@@ -20,13 +26,6 @@ public class LPMT {
         System.out.println(Design.padMessage(welcomeMessage, maxLength));
         System.out.println(Design.padMessage(loginMessage, maxLength));
         System.out.println(border);
-
-        initializeFunctionMap();
-        login();
-
-    }
-  
-    public static void login() throws IOException, InterruptedException {
         System.out.println(Design.formatMessage("Please select an option to login", Design.BLUE_COLOR));
         System.out.println("1. Login with email/username");
         System.out.println("2. Login with UUID");
