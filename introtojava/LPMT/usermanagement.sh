@@ -112,10 +112,10 @@ loginUser() {
 
     local hashedPassword=$(echo "$password" | sha256sum)
 
-    if grep -qE "^$username:$hashedPassword:" "$userFile"; then
-        local userRecord=$(grep -E "^$username:$hashedPassword:" "$userFile")
-        local role=$(echo "$userRecord" | cut -d':' -f3)
-        local uuid=$(echo "$userRecord" | cut -d':' -f4)
+    if grep -qE ":$username:$hashedPassword:" "$userFile"; then
+        local userRecord=$(grep -E ":$username:$hashedPassword:" "$userFile")
+        local role=$(echo "$userRecord" | cut -d':' -f4)
+        local uuid=$(echo "$userRecord" | cut -d':' -f1)
         echo "$role:$uuid"
     else
         echo "$username:$hashedPassword"
@@ -159,8 +159,8 @@ completeRegistration(){
 
 viewProfile(){
     local uuid=$1
-    if grep -qE ":[^:]*:[^:]*:$uuid" "$userFile"; then
-        grep -E ":[^:]*:[^:]*:$uuid" "$userFile"
+    if grep -qE "^$uuid:" "$userFile"; then
+        grep -E "^$uuid:" "$userFile"
         return 0
     else
         echo "User not found"
@@ -169,9 +169,20 @@ viewProfile(){
 }
 updateProfile(){
     local uuid=$2
-    echo "$uuid"
-    if grep -qE ":[^:]*:[^:]*:$uuid" "$userFile"; then
-        grep -E ":[^:]*:[^:]*:$uuid" "$userFile"
+    local username=$3
+    local password=$4
+    local role=$5
+    local firstName=$6
+    local lastName=$7
+    local email=$8
+    local dateofinfection=$9
+    local onMedication=${10}
+    local starDateofMedication=${11}
+    local dob=${12}
+    local country=${13}
+    if grep -qE "^$uuid:" "$userFile"; then
+        # sed/oldstring/newstring/g
+        sed -i "s/^$uuid:.*/$uuid:$username:$password:$role:$firstName:$lastName:$email:$dateofinfection:$onMedication:$starDateofMedication:$dob:$country/" "$userFile"
         return 0
     else
         echo "User not found"
@@ -193,6 +204,7 @@ exportDataAnalytics(){
     local dataAnalyticsfile="dataanalytics.csv"
     touch "$dataAnalyticsfile"
 }
+
 
 functionName=$1
 username=$2

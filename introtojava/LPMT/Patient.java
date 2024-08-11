@@ -28,9 +28,10 @@ public class Patient{
         String output = LPMT.executeCommand(command);
         String[] userData = output.split(":");
         if (userData.length >= 12) {
-            this.username = userData[0];
-            this.password = userData[1].toCharArray();
-            this.uuid = userData[3];
+            this.uuid = userData[0];
+            this.username = userData[1];
+            this.password = userData[2].toCharArray();
+            this.role = userData[3];
             this.firstName = userData[4];
             this.lastName = userData[5];
             this.email = userData[6];
@@ -86,15 +87,23 @@ public class Patient{
                     break;
                 case 2:
                     UpdateProfile();
+                    patientMenu(uuid);
                     break;
                 case 3:
                     ViewProfile();
                     break;
                 case 4:
                     logout = true;
+                    System.out.print(Design.formatMessage("Logging out", Design.YELLOW_COLOR));
+                    LPMT.printLoadingDots(5);
                     LPMT.login();
                     break;
                 case 5:
+                    System.out.print(Design.formatMessage("Exiting", Design.RED_COLOR));
+                    LPMT.printLoadingDots(5);
+                    // pad this message
+
+                    System.out.println(Design.padMessage(Design.formatMessage("Goodbye!", Design.RED_COLOR), 50));
                     System.exit(0);
                     break;
                 default:
@@ -181,10 +190,6 @@ public class Patient{
         return command;
     }
 
-    public void CalculateLPMT(){
-    // method to calculate LPMT - life expectancy - week two deliverable
-    }
-
 
     public void UpdateProfile() throws IOException, InterruptedException{
         // border color and padding
@@ -253,13 +258,15 @@ public class Patient{
                     break;
                 case 7:
                     System.out.println("Saving changes...");
-                    String[] command = {"./usermanagement.sh", "updateProfile", uuid, username != null ? username : this.username, password != null ? new String(password) : new String(this.password), firstName != null ? firstName : this.firstName, lastName != null ? lastName : this.lastName, email != null ? email : this.email, dateofinfection != null ? dateofinfection.toString() : this.dateofinfection.toString(), onMedication != null ? Boolean.toString(onMedication) : Boolean.toString(this.onMedication), starDateofMedication != null ? starDateofMedication.toString() : this.starDateofMedication.toString(), dob != null ? dob.toString() : this.dob.toString(), country != null ? country : this.country};
-                    LPMT.executeCommand(command);
+                    String[] command = {"./usermanagement.sh", "updateProfile", uuid, username != null ? username : this.username, password != null ? new String(password) : new String(this.password), this.role ,firstName != null ? firstName : this.firstName, lastName != null ? lastName : this.lastName, email != null ? email : this.email, dateofinfection != null ? dateofinfection.toString() : this.dateofinfection.toString(), onMedication != null ? Boolean.toString(onMedication) : Boolean.toString(this.onMedication), starDateofMedication != null ? starDateofMedication.toString() : this.starDateofMedication.toString(), dob != null ? dob.toString() : this.dob.toString(), country != null ? country : this.country};
+                    String output = LPMT.executeCommand(command);
+                    System.out.println(output);
                     System.out.println(Design.padMessage(Design.formatMessage("User data updated successfully", Design.GREEN_COLOR), 50));
                     save = true;
                     break;
                 case 8:
-                    System.out.println(Design.padMessage(Design.formatMessage("Cancelling changes...", Design.RED_COLOR), 50));
+                    System.out.print(Design.padMessage(Design.formatMessage("Cancelling changes", Design.RED_COLOR), 50));
+                    LPMT.printLoadingDots(5);
                     save = true;
                     break;
                 default:
@@ -296,7 +303,8 @@ public class Patient{
         System.out.println("LPMT - remaining lifespan (the clock is ticking): " + Design.formatMessage(Integer.toString(lpmt) + " years", Design.YELLOW_COLOR));
     }
     public int calculateLPMT() {
-        // Define average lifespan per country
+        // Define average lifespan per country in years, i have it in a .csv file
+        System.out.println(country);
         Map<String, Integer> averageLifespan = new HashMap<>();
         averageLifespan.put("Rwanda", 69);
         // Add other countries as needed...

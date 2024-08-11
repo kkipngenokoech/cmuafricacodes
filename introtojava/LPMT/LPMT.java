@@ -80,7 +80,7 @@ public class LPMT {
 
     public static void printLoadingDots(int seconds) throws InterruptedException {
         for (int i = 0; i < seconds; i++) {
-            Thread.sleep(1000);
+            Thread.sleep(100);
             System.out.print(".");
         }
         System.out.println();
@@ -112,6 +112,9 @@ public class LPMT {
                     if ((role.equals("admin") || role.equals("patient"))){
                         // login successful with colors
                         System.out.println(Design.padMessage(Design.formatMessage("Login successful, welcome "+username, Design.GREEN_COLOR),50));
+                        System.out.print(Design.formatMessage("Redirecting to dashboard", Design.YELLOW_COLOR));
+                        printLoadingDots(5);
+                        System.out.println(role);
                             if (role.equals("admin")){
                                 admin.callAdminMenu();
                             } else {
